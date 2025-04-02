@@ -1,0 +1,66 @@
+\<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Date & Factorial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input {
+            font-size: 16px;
+            padding: 5px;
+            text-align: center;
+        }
+        p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>JavaScript Pop-up Box Functions</h2>
+
+    <button onclick="displayDate()">Click to Display Date</button>
+    <input type="text" id="dateBox" readonly>
+
+    <br><br>
+
+    <button onclick="calculateFactorial()">Factorial of a Number</button>
+    <p id="factorialResult">Result</p>
+
+    <script>
+        function displayDate() {
+            document.getElementById("dateBox").value = new Date().toLocaleDateString();
+        }
+
+        function calculateFactorial() {
+            let num = prompt("Enter a number for factorial:");
+            
+            if (num !== null && num !== "" && !isNaN(num) && num >= 0) {
+                let factorial = 1;
+                for (let i = 1; i <= num; i++) {
+                    factorial *= i;
+                }
+                document.getElementById("factorialResult").innerText = 
+                    `Factorial of ${num} is: ${factorial}`;
+            } else {
+                document.getElementById("factorialResult").innerText = 
+                    "Please enter a valid non-negative number.";
+            }
+        }
+    </script>
+
+</body>
+</html>
