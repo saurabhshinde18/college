@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Cricket Scorecard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    button {
+      padding: 8px 12px;
+      margin: 10px 5px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .team {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+    }
+    .batting {
+      background: #e6f7ff;
+    }
+    .score {
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cricket Scorecard</h1>
+  
+  <div>
+    <button onclick="loadJSON()">Load JSON Data</button>
+    <button onclick="loadXML()">Load XML Data</button>
+  </div>
+  
+  <div id="teams"></div>
+  <div>
+    <h3>Batting</h3>
+    <table id="batsmen">
+      <tr><th>Batsman</th><th>Runs</th><th>Balls</th></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Bowling</h3>
+    <table id="bowlers">
+      <tr><th>Bowler</th><th>Overs</th><th>Runs</th><th>Wickets</th></tr>
+    </table>
+  </div>
+
+  <script>
+   
+    const jsonData = {
+      match: {
+        teams: [
+          { name: "India", score: "285/4", overs: 47.5, isBatting: true },
+          { name: "Australia", score: "0/0", overs: 0, isBatting: false }
+        ],
+        batsmen: [
+          { name: "R Sharma", runs: 120, balls: 108, isStriker: true },
+          { name: "V Kohli", runs: 75, balls: 82, isStriker: false }
+        ],
+        bowlers: [
+          { name: "P Cummins", overs: 9.5, runs: 45, wickets: 2 },
+          { name: "M Starc", overs: 9, runs: 52, wickets: 1 }
+        ]
+      }
+    };
+
+    const xmlData = `
+    <match>
+      <teams>
+        <team>
+          <name>England</name>
+          <score>342/6</score>
+          <overs>85.3</overs>
+          <isBatting>true</isBatting>
+        </team>
+        <team>
+          <name>New Zealand</name>
+          <score>0/0</score>
+          <overs>0</overs>
+          <isBatting>false</isBatting>
+        </team>
+      </teams>
+      <batsmen>
+        <batsman>
+          <name>J Root</name>
+          <runs>112</runs>
+          <balls>186</balls>
+          <isStriker>true</isStriker>
+        </batsman>
+        <batsman>
+          <name>B Stokes</name>
+          <runs>78</runs>
+          <balls>124</balls>
+          <isStriker>false</isStriker>
+        </batsman>
+      </batsmen>
+      <bowlers>
+        <bowler>
+          <name>T Boult</name>
+          <overs>18.3</overs>
+          <runs>67</runs>
+          <wickets>2</wickets>
+        </bowler>
+        <bowler>
+          <name>N Wagner</name>
+          <overs>17</overs>
+          <runs>58</runs>
+          <wickets>1</wickets>
+        </bowler>
+      </bowlers>
+    </match>
+    `;
+
+    function parseXML(xmlString) {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+      
+      const match = {
+        teams: [],
+        batsmen: [],
+        bowlers: []
+      };
+      
+
+      const teams = xmlDoc.querySelectorAll('team');
+      teams.forEach(team => {
+        match.teams.push({
+          name: team.querySelector('name').textContent,
+          score: team.querySelector('score').textContent,
+          overs: team.querySelector('overs').textContent,
+          isBatting: team.querySelector('isBatting').textContent === 'true'
+        });
+      });
+      
+     
+      const batsmen = xmlDoc.querySelectorAll('batsman');
+      batsmen.forEach(batsman => {
+        match.batsmen.push({
+          name: batsman.querySelector('name').textContent,
+          runs: batsman.querySelector('runs').textContent,
+          balls: batsman.querySelector('balls').textContent,
+          isStriker: batsman.querySelector('isStriker').textContent === 'true'
+        });
+      });
+      
+     
+      const bowlers = xmlDoc.querySelectorAll('bowler');
+      bowlers.forEach(bowler => {
+        match.bowlers.push({
+          name: bowler.querySelector('name').textContent,
+          overs: bowler.querySelector('overs').textContent,
+          runs: bowler.querySelector('runs').textContent,
+          wickets: bowler.querySelector('wickets').textContent
+        });
+      });
+      
+      return match;
+    }
+
+    function displayScorecard(match) {
+
+      const teamsDiv = document.getElementById('teams');
+      teamsDiv.innerHTML = '';
+      match.teams.forEach(team => {
+        const teamDiv = document.createElement('div');
+        teamDiv.className = `team ${team.isBatting ? 'batting' : ''}`;
+        teamDiv.innerHTML = `
+          <span>${team.name}</span>
+          <span class="score">${team.score} (${team.overs} overs)</span>
+        `;
+        teamsDiv.appendChild(teamDiv);
+      });
+
+      
+      const batsmenTable = document.getElementById('batsmen');
+      batsmenTable.innerHTML = '<tr><th>Batsman</th><th>Runs</th><th>Balls</th></tr>';
+      match.batsmen.forEach(batsman => {
+        const row = batsmenTable.insertRow();
+        row.innerHTML = `
+          <td>${batsman.name}${batsman.isStriker ? '*' : ''}</td>
+          <td>${batsman.runs}</td>
+          <td>${batsman.balls}</td>
+        `;
+      });
+
+    
+      const bowlersTable = document.getElementById('bowlers');
+      bowlersTable.innerHTML = '<tr><th>Bowler</th><th>Overs</th><th>Runs</th><th>Wickets</th></tr>';
+      match.bowlers.forEach(bowler => {
+        const row = bowlersTable.insertRow();
+        row.innerHTML = `
+          <td>${bowler.name}</td>
+          <td>${bowler.overs}</td>
+          <td>${bowler.runs}</td>
+          <td>${bowler.wickets}</td>
+        `;
+      });
+    }
+
+    function loadJSON() {
+      displayScorecard(jsonData.match);
+    }
+
+    function loadXML() {
+      const matchData = parseXML(xmlData);
+      displayScorecard(matchData);
+    }
+
+
+    loadJSON();
+  </script>
+</body>
+</html>

@@ -14,9 +14,12 @@
     #main{
         height: 100%;
         width: 100%;
-    
     }
     #nav{ 
+        position: sticky;  
+        top: 0;
+        overflow: hidden;
+        z-index: 1;
         width: 100%;
         display: flex;
         justify-content:space-between;
@@ -213,5 +216,4 @@
     -webkit-box-shadow: -5px 0px 35px 18px rgba(0,0,0,0.7);
     -moz-box-shadow: -5px 0px 35px 18px rgba(0,0,0,0.7);
     box-shadow: -5px 0px 35px 18px rgba(0,0,0,0.7);
-    
     }
